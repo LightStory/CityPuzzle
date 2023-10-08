@@ -1,0 +1,125 @@
+
+<html>
+<head>
+  <title>GPS Task Game</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+
+<h1>城市解謎</h1>
+
+<img id="task-image" src="placeholder.jpg" alt="Task Image" style="width:400px;height:400px;">
+<button id="task-button">尚未到任務區域... ...</button>
+<button id="test-button">我已到達（作弊按鈕）</button>
+
+<script src="script.js"></script>
+
+
+ <style>
+#task-button {
+  font-size: 24px;
+  padding: 20px;
+  margin-top: 20px;
+  cursor: not-allowed;
+  background-color: grey;
+  color: white;
+  border: none;
+  width: 100%;
+}
+#task-button.enabled {
+  cursor: pointer;
+  background-color: orange;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
+}
+#task-button.completed {
+  background-color: brown;
+  box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
+}
+#test-button {
+  font-size: 18px;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: white;
+  color: lightgrey;
+  border: 2px solid grey;
+  cursor: pointer;
+  width: 100%;
+}
+
+  </style>
+
+
+</head>
+
+
+
+<body>
+
+  <script>
+let state = "not-arrived";  // not-arrived, arrived, in-progress
+const taskButton = document.getElementById("task-button");
+const testButton = document.getElementById("test-button");
+
+function updateButton() {
+  if (state === "not-arrived") {
+    taskButton.innerHTML = "尚未到任務區域... ...";
+    taskButton.className = "";
+    taskButton.style.cursor = "not-allowed";
+    taskButton.disabled = true;
+  } else if (state === "arrived") {
+    taskButton.innerHTML = "到達地點，點擊接取任務";
+    taskButton.className = "enabled";
+    taskButton.style.cursor = "pointer";
+    taskButton.disabled = false;
+  } else if (state === "in-progress") {
+    taskButton.innerHTML = "任務達成，查看下個提示";
+    taskButton.className = "completed";
+    taskButton.style.cursor = "pointer";
+    taskButton.disabled = false;
+  }
+}
+
+function animateText() {
+  let counter = 0;
+  let text = "任務接取中";
+  taskButton.innerHTML = text;
+  taskButton.style.cursor = "default";  // Change the cursor to a default arrow
+  taskButton.disabled = true;  // Disable the button during animation
+  let interval = setInterval(() => {
+    text += ".";
+    counter++;
+    taskButton.innerHTML = text;
+    if (counter === 6) {
+      clearInterval(interval);
+      taskButton.style.cursor = "pointer";  // Change the cursor back to pointer
+      taskButton.disabled = false;  // Enable the button after animation
+    }
+  }, 500);
+}
+
+// Attach event listener for the task button
+taskButton.addEventListener("click", function() {
+  if (state === "arrived") {
+    state = "in-progress";
+    animateText();
+    setTimeout(() => {
+      updateButton();
+    }, 3000);
+  } else if (state === "in-progress") {
+    state = "not-arrived";
+    updateButton();
+  }
+});
+
+// Attach event listener for the test button
+testButton.addEventListener("click", function() {
+  if (state === "not-arrived") {
+    state = "arrived";
+    updateButton();
+  }
+});
+
+updateButton();
+
+  </script>
+
+</body>
+</html>
